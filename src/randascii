@@ -54,6 +54,9 @@ __ERR_INVALID_PARAMETERS = "Invalid parameters in function!"
 global verbosity
 global _randclass
 
+# Set default verbosity
+verbosity = 0
+
 # Attempt to set SystemRandom as global random class
 _randclass = random
 try:
