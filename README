@@ -10,7 +10,7 @@ Project Parameters
 
 :Author: Andrew Moe
 :Contact: moe.andrew@gmail.com
-:copyright: GNU General Public License, version 2.  See the COPYING file to view the project licensing terms.  Read
+:copyright: GNU General Public License, version 2.  See the LICENSE file to view the project licensing terms.  Read
             and/or comprehend this license before using this program.
 :abstract: randascii - A handy tool to generate (pseudo-)random ASCII strings.
 
