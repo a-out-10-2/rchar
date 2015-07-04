@@ -1,0 +1,33 @@
+==================
+randascii - README
+==================
+
+randascii - A handy tool to generate (pseudo-)random ASCII strings.
+
+------------------
+Project Parameters
+------------------
+
+:Author: Andrew Moe
+:Contact: moe.andrew@gmail.com
+:copyright: GNU General Public License, version 2.  See the COPYING file to view the project licensing terms.  Read
+            and/or comprehend this license before using this program.
+:abstract: randascii - A handy tool to generate (pseudo-)random ASCII strings.
+
+----------------------------
+How To Run Or Call randascii
+----------------------------
+
+To run from the command line, run randascii with help option to see proper syntax.
+
+Syntax (in-path)
+    randascii --help
+
+Fool-proof syntax
+    env python ./randascii --help
+
+
+To call method from Python, import the module.
+    import randascii
+
+View program source or use Python tab completion to view accessible methods.

@@ -1,98 +1,298 @@
 #!/usr/bin/env python3.4
+# -----------------------------------------------------------------------------
+#   randascii
+#
+#   Copyright (C) 2015  Andrew Moe
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License along
+#   with this program; if not, write to the Free Software Foundation, Inc.,
+#   51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA. Or, see
+#   <http://www.gnu.org/licenses/gpl-2.0.html>.
+# -----------------------------------------------------------------------------
 
-import random
+# done: Create global-protected random function variable
+# done:     Minimize end-recursion function Generate String
+# done: Make attempt to import SystemRandom, default to Python at fail
+# done: Make ctrl33, print95, extprint223, full256 the depth options
+# done: Figure out multi-range (aka unprintable "127-Del") problem
+# done: Enhance debug verbosity
+# done: Complete main execution method
+# done: Set default program values
+# done: Harden methods with asserts
+# done: Set __all__
+# done: Write docs
+# done: Decide on license
+# done: -> Push 1.0
+# TODO: Mutually-exclusive argument group might not be so (See `randascii -c -P 4 -v`)
+# TODO: Provide solution to generate strings longer than Python's maximum recursion depth
+# TODO: Make buffer xor recursive option
+# TODO: Make seed input option (for total rando shit)
+# TODO: Make RegEx2Charscope converter
+# FANTASY: Make a parallel random weapon of doom.
+
 import argparse
+import random
+import sys
 
-__all__ = []
-__author__ = 'Andy Moe'
-__email__ = 'moea@?.com'
-__version__ = '0.9'
-
+__ERR_SYS_RAND_NOT_FOUND = "SystemRandom not supported, defaulting to Python random."
 __ERR_STRING_LENGTH = "String length must be greater than zero!"
+__ERR_CHARSCOPE_IS_EMPTY = "Charscope is empty."
+__ERR_ASCII_RANGE_INVALID = "Input ASCII range out of bounds (0 <= r <= 255)."
+__ERR_INTERFACE_FUNC_NOT_CALLABLE = "Interface function not callable."
 __ERR_INVALID_PARAMETERS = "Invalid parameters in function!"
 
-#def generate_charscope_random_string(charscope, length):
-#    assert length > 0, __ERR_STRING_LENGTH
-#    assert charscope != None and charscope != "", "Charscope must be valid string of length > 0."
-#    outbuf = ""
-#    for i in list(range(0,length)):
-#        outbuf += random.choice(charscope)
-#    return outbuf
+global verbosity
+global _randclass
 
-def generate_full256_string(length):
-    return generate_string_in_range(length, 0, 256)
+# Attempt to set SystemRandom as global random class
+_randclass = random
+try:
+    randclass = random.SystemRandom()
+except (NotImplementedError, Exception):
+    print(__ERR_SYS_RAND_NOT_FOUND, file=sys.stderr)
 
-def generate_printable94_string(length):
-    return generate_string_in_range(length, 32, 127)
+__author__ = 'Andy Moe'
+__email__ = 'moe.andrew@gmail.com'
+__version__ = '1.0'
+__all__ = ['__version__', '__author__', __email__, 'generate_ctrl33', 'generate_print95', 'generate_extprint223',
+           'generate_full256', 'generate_string_from_charscope', 'generate_string_from_range']
 
-def generate_string_in_range(length, lobound, hibound):
-    return __generate_string(length, lobound, hibound, None)
 
-def generate_string_in_charscope(length, charscope):
-    return __generate_string(length, -1, -1, charscope)
+def generate_ctrl33(length):
+    """Generate a pseudo-random string from the 33 ASCII control characters.
 
-def generate_character_in_range(lobound, hibound):
-    return chr(random.randrange(lobound, hibound))
+    :param length: The quantity of characters to generate in string.
+    :return: String
+    """
+    return generate_string_from_charscope(length, __range2charscope(0, 31) + chr(127))
 
-def generate_character_in_charscope(charscope):
-    return random.choice(charscope)
 
-def __generate_string(length, lobound, hibound, charscope):
-    if charscope != None and charscope != "":
-        if length > 1:
-            return generate_character_in_charscope(charscope) + __generate_string(length - 1, -1, -1, charscope)
-        elif length is 1:
-            return generate_character_in_charscope(charscope)
+def generate_print95(length):
+    """Generate a pseudo-random string from the standard printable 95 ASCII characters.
 
-    elif lobound >= 0 and hibound > 0:
-        if length > 1:
-            return generate_character_in_range(lobound, hibound) + __generate_string(length - 1, lobound, hibound, None)
-        elif length is 1:
-            return generate_character_in_range(lobound, hibound)
-    
-    raise Exception(__ERR_INVALID_PARAMETERS + " lobound=" + str(lobound) + " hibound=" + str(hibound) + " charscope=" + str(charscope))
-    return None
+    :param length: The quantity of characters to generate in string.
+    :return: String
+    """
+    return generate_string_from_range(length, 32, 126)
 
-def parse_args():
+
+def generate_extprint223(length):
+    """Generate a pseudo-random string from the standard+extended printable 223 ASCII characters.
+
+    :param length: The quantity of characters to generate in string.
+    :return: String
+    """
+    return generate_string_from_charscope(length, __range2charscope(32, 126) + __range2charscope(128, 255))
+
+
+def generate_full256(length):
+    """Generate a pseudo-random string from all 256 ASCII characters.
+
+    :param length: The quantity of characters to generate in string.
+    :return: String
+    """
+    return generate_string_from_range(length, 0, 255)
+
+
+def generate_string_from_charscope(length, charscope):
+    """Generate a pseudo-random string from a provided scope of characters.
+
+    :param length: The quantity of characters to generate in string.
+    :param charscope: The scope of characters from which to select.
+    :return: String
+    """
+    assert charscope is not None and charscope is not "", __ERR_CHARSCOPE_IS_EMPTY
+
+    if verbosity >= 2:
+        print("DEBUG: using charscope = %s" % charscope, file=sys.stderr)
+    return __generate_string(length, __generate_character_in_charscope, charscope)
+
+
+def generate_string_from_range(length, lobound, hibound):
+    """Generate a pseudo-random string from a range of ASCII characters.
+
+    :param length: The quantity of characters to generate in string.
+    :param lobound: The low-range boundary of characters to select.
+    :param hibound: The high-range boundary of characters to select.
+    :return: String
+    """
+    assert lobound >= 0 and hibound <= 255, __ERR_ASCII_RANGE_INVALID
+
+    if verbosity >= 2:
+        print("DEBUG: using range = [%d, %d]" % (lobound, hibound), file=sys.stderr)
+    return __generate_string(length, __generate_character_in_charscope, __range2charscope(lobound, hibound))
+
+
+def __generate_string(length, _randchar_func, params):
+    """Generate a pseudo-random string from a provided random-character function.
+
+    :param length: The quantity of characters to generate in string.
+    :param _randchar_func: The function that generates a random character.
+    :param params: The required argument list to pass into _randchar_func .
+    :return: String
+    """
+    assert length > 0, __ERR_STRING_LENGTH
+    assert callable(_randchar_func), __ERR_INTERFACE_FUNC_NOT_CALLABLE
+
+    # Generate a character and recursively generate the rest of the string.
+    if length > 1:
+        return _randchar_func(*[params]) + __generate_string(length - 1, _randchar_func, params)
+    # Generate and return the last character.
+    elif length is 1:
+        return _randchar_func(*[params])
+    return ""
+
+
+def __generate_character_in_charscope(charscope):
+    """Generate a pseudo-random character from a provided scope of characters.
+
+    :param charscope: The scope of characters from which to select.
+    :return: String
+    """
+    return _randclass.choice(charscope)
+
+
+def __range2charscope(lobound, hibound):
+    """Convert an (int, int) range representing ASCII characters into a string
+    containing that full scope of characters.
+
+    :param lobound: The low-range boundary of characters to select.
+    :param hibound: The high-range boundary of characters to select.
+    :return: String
+    """
+    # Iterate through a range and return each value as a character.
+    rtnbuf = ""
+    for i in range(lobound, hibound + 1):
+        rtnbuf += chr(i)
+    return rtnbuf
+
+
+def __unit_test():
+    """Perform a unit test on this program.
+
+    :return rc: The return code that is a sum of errors experienced in unit test.
+    """
+    rc = 0
+    rc += __unit_breakdown(5, generate_ctrl33)
+    rc += __unit_breakdown(6, generate_print95)
+    rc += __unit_breakdown(7, generate_extprint223)
+    rc += __unit_breakdown(8, generate_full256)
+    return rc
+
+
+def __unit_breakdown(length, _func_str):
+    """Breakdown the output of a generated string function.
+
+    :param length: The quantity of characters to generate in string.
+    :param _func_str: The function to generate a particular random string.
+    :return: The return code that is a sum of errors experienced in unit test breakdown.
+    """
+    # Generate string data
+    outstr = _func_str.__call__(length)
+    len_outstr = len(outstr)
+
+    # Print string analysis
+    print("test: %s(%d)" % (_func_str.__name__, length))
+    print("len   = %d" % len_outstr)
+    print("code  = %s" % outstr.encode())
+    print("repr  = %s" % repr(outstr))
+    print("print = %s" % outstr)
+    print()
+
+    # Validate breakdown
+    rc = 0
+    if length is not len_outstr:
+        rc += 1
+    return rc
+
+
+def __parse_args():
+    """Parse the arguments received from STDIN.
+
+    :return (args.length, args.charscope, args.ctrl33,
+             args.print95, args.extprint223, args.full256,
+             args.unittest, args.verbose):
+    """
     ## Constructing argument parser
     parser = argparse.ArgumentParser(description="A handy tool to generate (pseudo-)random ASCII strings.")
-    parser.add_argument("--charscope", required=False, type=str, help="List of characters to be chosen at random.") 
-    parser.add_argument("--printable94", action='store_true', default=True, help="The charscope of all 94 key-combinations on a standard keyboard.") 
-    parser.add_argument("--full256", action='store_true', help="The charscope of all 256 Extended ASCII characters.") 
-    parser.add_argument("--length", required=False, type=int, default=8, help="Quantity of characters in generated string.")  
-    parser.add_argument("--verbose", action="store_true", help="Display randstr debug output during runtime.")
-    parser.add_argument("--version", action='version', version='randstr %s' % __version__)
+
+    parser.add_argument("length", type=int, nargs='?', default=8,
+                        help="The quantity of characters to generate in string.")
+    strchoice_group = parser.add_mutually_exclusive_group()
+    strchoice_group.add_argument("-c", "--charscope", type=str, nargs='?', default=None,
+                                 help="A pseudo-random string generated by this charscope.")
+    strchoice_group.add_argument("-C", "--ctrl33", action='store_true',
+                                 help="A pseudo-random string generated from the 33 ASCII control characters.")
+    strchoice_group.add_argument("-P", "--print95", action='store_true',
+                                 help="A pseudo-random string generated from the 95 standard ASCII characters.")
+    strchoice_group.add_argument("-E", "--extprint223", action='store_true',
+                                 help="A pseudo-random string generated from the 223 standard+extended ASCII "
+                                      "characters.")
+    strchoice_group.add_argument("-A", "--full256", action='store_true',
+                                 help="A pseudo-random string generated from all 256 ASCII characters.")
+    parser.add_argument("--unittest", required=False, action='store_true',
+                        help="Execute unit test and program exit rc=errors.")
+    parser.add_argument("-v", "--verbose", action="count", default=0,
+                        help="Display randascii debug output during runtime.")
+    parser.add_argument("--version", action='version', version='randascii %s' % __version__)
 
     ## Process arguments
     args = parser.parse_args()
 
+    ## Set default option if no choice is selected
+    if args.charscope is None and not args.ctrl33 and not args.print95 and not args.extprint223 and not args.full256:
+        args.print95 = True
+
     ## Display program variables
-    if args.verbose == True:
-        print("randstr.py input arguments")
-        print("\t--charscope \t"+str(args.charscope))
-        print("\t--printable94 \t"+str(args.printable94))
-        print("\t--full256 \t"+str(args.full256))
-        print("\t--length \t"+str(args.length))
-        print("\t--verbose \t"+str(args.verbose))
+    if args.verbose >= 1:
+        print("randascii input arguments", file=sys.stderr)
+        print("\tlength \t\t\t" + str(args.length), file=sys.stderr)
+        print("\t--charscope \t" + str(args.charscope), file=sys.stderr)
+        print("\t--ctrl33 \t\t" + str(args.ctrl33), file=sys.stderr)
+        print("\t--print95 \t\t" + str(args.print95), file=sys.stderr)
+        print("\t--extprint223 \t" + str(args.extprint223), file=sys.stderr)
+        print("\t--full256 \t\t" + str(args.full256), file=sys.stderr)
+        print("\t--unittest \t\t" + str(args.unittest), file=sys.stderr)
+        print("\t--verbose \t\t" + str(args.verbose), file=sys.stderr)
         print("")
 
-    return(args.charscope, args.printable94, args.full256, args.length, args.verbose)
+    return (
+        args.length, args.charscope, args.ctrl33, args.print95, args.extprint223, args.full256, args.unittest,
+        args.verbose)
 
 ## Program execution start
 if __name__ == "__main__":
-    
-    (charscope, printable94, full256, length, verbose) = parse_args()
+    (length, charscope, ctrl33, print95, extprint223, full256, unittest, verbose) = __parse_args()
 
-    ## Validate parameters
-    if charscope != None:
-        assert printable94 != full256, "printable94 xor full256 must be selected!"
+    # Set debug level
+    verbosity = verbose
 
-    print("Printable 94 [8]")
-    print(generate_printable94_string(8))
-    print()
-    print("Full 256 [7]")
-    print(generate_full256_string(7))
-    print()
-    print("Charscope abcd [6]")
-    print(generate_string_in_charscope(6, "abcd"))
-    print()
+    # Generate string based on parameters
+    if unittest:
+        sys.exit(__unit_test())
+    elif charscope != None:
+        print(generate_string_from_charscope(length, charscope))
+    elif ctrl33:
+        print(generate_ctrl33(length))
+    elif print95:
+        print(generate_print95(length))
+    elif extprint223:
+        print(generate_extprint223(length))
+    elif full256:
+        print(generate_full256(length))
+    else:
+        raise Exception("Argument parser did return valid parameters.  Case should not be reachable.  Exiting.")
+        sys.exit(1)
+
+    # Exit the program as expected
+    sys.exit(0)
