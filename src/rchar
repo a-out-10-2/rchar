@@ -44,10 +44,8 @@ try:
 except (NotImplementedError, Exception):
     print(__ERR_SYS_RAND_NOT_FOUND, file=sys.stderr)
 
-__author__ = 'Andy Moe'
-__email__ = 'moe.andrew@gmail.com'
-__version__ = '1.0'
-__all__ = ['__version__', '__author__', '__email__', 'generate_ctrl33', 'generate_print95', 'generate_extprint223',
+__version__ = '1.1'
+__all__ = ['__version__', 'generate_ctrl33', 'generate_print95', 'generate_extprint223',
            'generate_full256', 'generate_string_from_charscope', 'generate_string_from_range']
 
 
