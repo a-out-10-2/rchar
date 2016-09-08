@@ -1,8 +1,8 @@
-==================
-randascii - README
-==================
+==============
+rchar - README
+==============
 
-randascii - A handy tool to generate (pseudo-)random ASCII strings.
+rchar - A handy tool to generate (pseudo-)random strings.
 
 ------------------
 Project Parameters
@@ -12,22 +12,21 @@ Project Parameters
 :Contact: moe.andrew@gmail.com
 :copyright: GNU General Public License, version 2.  See the LICENSE file to view the project licensing terms.  Read
             and/or comprehend this license before using this program.
-:abstract: randascii - A handy tool to generate (pseudo-)random ASCII strings.
+:abstract: rchar - A handy tool to generate (pseudo-)random ASCII strings.
 
-----------------------------
-How To Run Or Call randascii
-----------------------------
+------------------------
+How To Run Or Call rchar
+------------------------
 
 To run from the command line, run randascii with help option to see proper syntax.
 
 Syntax (in-path)
-    randascii --help
+    rchar --help
 
 Fool-proof syntax
-    env python ./randascii --help
-
+    env python ./rchar --help
 
 To call method from Python, import the module.
-    import randascii
+    import rchar
 
 View program source or use Python tab completion to view accessible methods.
