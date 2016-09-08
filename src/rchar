@@ -20,26 +20,6 @@
 #   <http://www.gnu.org/licenses/gpl-2.0.html>.
 # -----------------------------------------------------------------------------
 
-# done: Create global-protected random function variable
-# done:     Minimize end-recursion function Generate String
-# done: Make attempt to import SystemRandom, default to Python at fail
-# done: Make ctrl33, print95, extprint223, full256 the depth options
-# done: Figure out multi-range (aka unprintable "127-Del") problem
-# done: Enhance debug verbosity
-# done: Complete main execution method
-# done: Set default program values
-# done: Harden methods with asserts
-# done: Set __all__
-# done: Write docs
-# done: Decide on license
-# done: -> Push 1.0
-# TODO: Mutually-exclusive argument group might not be so (See `rchar -c -P 4 -v`)
-# TODO: Provide solution to generate strings longer than Python's maximum recursion depth
-# TODO: Make buffer xor recursive option
-# TODO: Make seed input option (for total rando shit)
-# TODO: Make RegEx2Charscope converter
-# FANTASY: Make a parallel random weapon of doom.
-
 import argparse
 import random
 import sys
