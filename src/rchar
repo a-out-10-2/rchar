@@ -206,7 +206,7 @@ def __parse_args():
              args.print95, args.extprint223, args.full256,
              args.unittest, args.verbose):
     """
-    ## Constructing argument parser
+    # Constructing argument parser
     parser = argparse.ArgumentParser(description="A handy tool to generate (pseudo-)random ASCII strings.")
 
     parser.add_argument("length", type=int, nargs='?', default=8,
@@ -229,14 +229,14 @@ def __parse_args():
                         help="Display rchar debug output during runtime.")
     parser.add_argument("--version", action='version', version='rchar %s' % __version__)
 
-    ## Process arguments
+    # Process arguments
     args = parser.parse_args()
 
-    ## Set default option if no choice is selected
+    # Set default option if no choice is selected
     if args.charscope is None and not args.ctrl33 and not args.print95 and not args.extprint223 and not args.full256:
         args.print95 = True
 
-    ## Display program variables
+    # Display program variables
     if args.verbose >= 1:
         print("rchar input arguments", file=sys.stderr)
         print("\tlength \t\t\t" + str(args.length), file=sys.stderr)
@@ -253,7 +253,7 @@ def __parse_args():
         args.length, args.charscope, args.ctrl33, args.print95, args.extprint223, args.full256, args.unittest,
         args.verbose)
 
-## Program execution start
+# Program execution start
 if __name__ == "__main__":
     (length, charscope, ctrl33, print95, extprint223, full256, unittest, verbose) = __parse_args()
 
@@ -263,7 +263,7 @@ if __name__ == "__main__":
     # Generate string based on parameters
     if unittest:
         sys.exit(__unit_test())
-    elif charscope != None:
+    elif charscope is not None:
         print(generate_string_from_charscope(length, charscope))
     elif ctrl33:
         print(generate_ctrl33(length))
