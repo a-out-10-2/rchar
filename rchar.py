@@ -1,8 +1,9 @@
 #!/usr/bin/env python3.4
+# -*- coding: utf-8 -*-
 # -----------------------------------------------------------------------------
-#   rchar
+#   rchar.py
 #
-#   Copyright (C) 2015, 2016 Andrew Moe
+#   Copyright (C) 2015 - 2017 Andrew Moe
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -21,6 +22,7 @@
 # -----------------------------------------------------------------------------
 
 import argparse
+import logging
 import random
 import sys
 
@@ -42,7 +44,7 @@ except (NotImplementedError, Exception):
     print(__ERR_SYS_RAND_NOT_FOUND, file=sys.stderr)
 
 __version__ = '1.1'
-__all__ = ['__version__', 'generate_ctrl33', 'generate_print95', 'generate_extprint223',
+__all__ = ['__version__', 'parse_args2', 'rchar_main', 'generate_ctrl33', 'generate_print95', 'generate_extprint223',
            'generate_full256', 'generate_string_from_charscope', 'generate_string_from_range']
 
 
@@ -53,6 +55,7 @@ def generate_ctrl33(length):
     :return: The generated string of ASCII control characters
     :rtype: str
     """
+    logging.debug("Generating random string from the 33 ASCII control characters. (lenth = {})".format(length))
     return generate_string_from_charscope(length, __range2charscope(0, 31) + chr(127))
 
 
@@ -63,6 +66,7 @@ def generate_print95(length):
     :return: The generated string of printable ASCII characters.
     :rtype: str
     """
+    logging.debug("Generating random string from the standard printable 95 ASCII characters. (length = {})".format(length))
     return generate_string_from_range(length, 32, 126)
 
 
@@ -73,6 +77,7 @@ def generate_extprint223(length):
     :return: The generated string from the extended set of printable ASCII characters.
     :rtype: str
     """
+    logging.debug("Generating random string from the standard+extended printable 223 ASCII characters. (length = {})".format(length))
     return generate_string_from_charscope(length, __range2charscope(32, 126) + __range2charscope(128, 255))
 
 
@@ -83,6 +88,7 @@ def generate_full256(length):
     :return: The generated string from all 256 ASCII characters.
     :rtype: str
     """
+    logging.debug("Generating random string from all 256 ASCII characters. (length = {})".format(length))
     return generate_string_from_range(length, 0, 255)
 
 
@@ -96,8 +102,7 @@ def generate_string_from_charscope(length, charscope):
     """
     assert charscope is not None and charscope is not "", __ERR_CHARSCOPE_IS_EMPTY
 
-    if verbosity >= 2:
-        print("DEBUG: using charscope = %s" % charscope, file=sys.stderr)
+    logging.debug("Generating random string from the provided charscope. (length = {}, charscope = {})".format(length, charscope))
     return __generate_string(length, __generate_character_in_charscope, charscope)
 
 
@@ -112,8 +117,7 @@ def generate_string_from_range(length, lobound, hibound):
     """
     assert lobound >= 0 and hibound <= 255, __ERR_ASCII_RANGE_INVALID
 
-    if verbosity >= 2:
-        print("DEBUG: using range = [%d, %d]" % (lobound, hibound), file=sys.stderr)
+    logging.debug("Generating random string from a range of ASCII characters. (length = {}, [{}, {}])".format(length, lobound, hibound))
     return __generate_string(length, __generate_character_in_charscope, __range2charscope(lobound, hibound))
 
 
@@ -231,8 +235,8 @@ def __parse_args():
     parser.add_argument("--unittest", required=False, action='store_true',
                         help="Execute unit test and program exit rc=errors.")
     parser.add_argument("-v", "--verbose", action="count", default=0,
-                        help="Display rchar debug output during runtime.")
-    parser.add_argument("--version", action='version', version='rchar %s' % __version__)
+                        help="Display rchar.py debug output during runtime.")
+    parser.add_argument("--version", action='version', version='rchar.py %s' % __version__)
 
     # Process arguments
     args = parser.parse_args()
@@ -241,26 +245,69 @@ def __parse_args():
     if args.charscope is None and not args.ctrl33 and not args.print95 and not args.extprint223 and not args.full256:
         args.print95 = True
 
-    # Display program variables
-    if args.verbose >= 1:
-        print("rchar input arguments", file=sys.stderr)
-        print("\tlength \t\t\t" + str(args.length), file=sys.stderr)
-        print("\t--charscope \t" + str(args.charscope), file=sys.stderr)
-        print("\t--ctrl33 \t\t" + str(args.ctrl33), file=sys.stderr)
-        print("\t--print95 \t\t" + str(args.print95), file=sys.stderr)
-        print("\t--extprint223 \t" + str(args.extprint223), file=sys.stderr)
-        print("\t--full256 \t\t" + str(args.full256), file=sys.stderr)
-        print("\t--unittest \t\t" + str(args.unittest), file=sys.stderr)
-        print("\t--verbose \t\t" + str(args.verbose), file=sys.stderr)
-        print("")
+    return args
+
+
+def parse_args2(*params):
+    """Parse the arguments received from STDIN.
+
+    :return: The parameters parsed from the input arguments.
+    :rtype: Namespace
+    """
+    # Constructing argument parser
+    parser = argparse.ArgumentParser(prog="rchar", description="A handy tool to generate (pseudo-)random ASCII strings.")
+
+    parser.add_argument("length", type=int, nargs='?', default=8,
+                        help="The quantity of characters to generate in string.")
+    strchoice_group = parser.add_mutually_exclusive_group()
+    strchoice_group.add_argument("-c", "--charscope", type=str, nargs='?', default=None,
+                                 help="A pseudo-random string generated by this charscope.")
+    strchoice_group.add_argument("-C", "--ctrl33", action='store_true',
+                                 help="A pseudo-random string generated from the 33 ASCII control characters.")
+    strchoice_group.add_argument("-P", "--print95", action='store_true',
+                                 help="A pseudo-random string generated from the 95 standard ASCII characters.")
+    strchoice_group.add_argument("-E", "--extprint223", action='store_true',
+                                 help="A pseudo-random string generated from the 223 standard+extended ASCII "
+                                      "characters.")
+    strchoice_group.add_argument("-A", "--full256", action='store_true',
+                                 help="A pseudo-random string generated from all 256 ASCII characters.")
+    parser.add_argument("--unittest", required=False, action='store_true',
+                        help="Execute unit test and program exit rc=errors.")
+    parser.add_argument("-v", "--verbose", action="count", default=0,
+                        help="Display rchar.py debug output during runtime.")
+    parser.add_argument("--version", action='version', version='rchar.py %s' % __version__)
+
+    # Process arguments
+    args = parser.parse_args(params)
+
+    # Set default option if no choice is selected
+    if args.charscope is None and not args.ctrl33 and not args.print95 and not args.extprint223 and not args.full256:
+        args.print95 = True
 
     return args
 
 
-# Program execution start
-if __name__ == "__main__":
+def rchar_main(params):
+    """
+    Execute the main function of the program.
+    :param params: The parameters that dictation the functionality of the program.
+    :return: The return code of the main function.
+    :rtype: int
+    """
+    # Set up logging
+    if params.verbose > 0:
+        logging.basicConfig(format='%(message)s', level=logging.DEBUG)
 
-    params = __parse_args()
+    # Display program variables
+    logging.debug("rchar.py input arguments")
+    logging.debug("\tlength \t\t\t{}".format(params.length))
+    logging.debug("\t--charscope \t".format(params.charscope))
+    logging.debug("\t--ctrl33 \t\t".format(params.ctrl33))
+    logging.debug("\t--print95 \t\t".format(params.print95))
+    logging.debug("\t--extprint223 \t".format(params.extprint223))
+    logging.debug("\t--full256 \t\t".format(params.full256))
+    logging.debug("\t--unittest \t\t".format(params.unittest))
+    logging.debug("\t--verbose \t\t".format(params.verbose))
 
     # Generate string based on parameters
     if params.unittest:
@@ -283,7 +330,8 @@ if __name__ == "__main__":
 
     else:
         raise Exception("Argument parser did return valid parameters.  Case should not be reachable.  Exiting.")
-        sys.exit(1)
+        return 1
 
-    # Exit the program as expected
-    sys.exit(0)
+# Program execution start
+if __name__ == "__main__":
+    sys.exit(rchar_main(parse_args2() or 0))
