@@ -52,7 +52,7 @@ class BasicCharacterVerification(unittest.TestCase):
         """
         # Execute rchar and re-direct output to buffer
         args = ('--ctrl33', str(DEFAULT_LENGTH))
-        rstring = rchar_output_string(*args)
+        rstring = rchar_output_string(args)
 
         # Verify result
         self.assertEqual(len(rstring), DEFAULT_LENGTH,
@@ -70,7 +70,7 @@ class BasicCharacterVerification(unittest.TestCase):
         """
         # Execute rchar and retrieve
         args = ['--print95', str(DEFAULT_LENGTH)]
-        rstring = rchar_output_string(*args)
+        rstring = rchar_output_string(args)
 
         # Verify result
         self.assertEqual(len(rstring), DEFAULT_LENGTH,
@@ -86,7 +86,7 @@ class BasicCharacterVerification(unittest.TestCase):
         """
         # Execute rchar and re-direct output to buffer
         args = ['--extprint223', str(DEFAULT_LENGTH)]
-        rstring = rchar_output_string(*args)
+        rstring = rchar_output_string(args)
 
         # Verify result
         self.assertEqual(len(rstring), DEFAULT_LENGTH,
@@ -102,11 +102,11 @@ class BasicCharacterVerification(unittest.TestCase):
         """
         # Generate a random charscope with rchar
         args = ['--full256', str(DEFAULT_LENGTH)]
-        charscope = rchar_output_string(*args)
+        charscope = rchar_output_string(args)
 
         # Execute rchar and re-direct output to buffer
         args = ['--charscope', charscope, str(DEFAULT_LENGTH)]
-        rstring = rchar_output_string(*args)
+        rstring = rchar_output_string(args)
 
         # Verify result
         self.assertEqual(len(rstring), DEFAULT_LENGTH,
