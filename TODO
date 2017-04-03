@@ -11,10 +11,10 @@ done: Set __all__
 done: Write docs
 done: Decide on license
 done: -> Push 1.0
-TODO: Mutually-exclusive argument group might not be so (See `rchar -c -P 4 -v`)
+done: Mutually-exclusive argument group might not be so (See `rchar -c -P 4 -v`)
 TODO: Provide solution to generate strings longer than Python's maximum recursion depth
 TODO: Make buffer xor recursive option
 TODO: Make seed input option (for total rando shit)
-TODO: Make RegEx2Charscope converter
+TODO: Make RegEx2Charscope converter, or RandEx lib.
 FANTASY: Make a parallel random weapon of doom.
 TODO: Support UTF-8
