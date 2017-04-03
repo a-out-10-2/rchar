@@ -24,7 +24,7 @@ from io import StringIO
 from contextlib import redirect_stdout
 import unittest
 
-from rchar import rchar_main, parse_args2
+from rchar import main, parse_args
 
 DEFAULT_LENGTH = 256
 
@@ -40,7 +40,7 @@ def rchar_output_string(*args):
     """
     result = StringIO()
     with redirect_stdout(result):
-        rchar_main(parse_args2(*args))
+        main(parse_args(*args))
     return str(result.getvalue()).rstrip('\n')
 
 
@@ -112,7 +112,8 @@ class BasicCharacterVerification(unittest.TestCase):
         self.assertEqual(len(rstring), DEFAULT_LENGTH,
                          msg="Generated string length {} != {}".format(len(rstring), DEFAULT_LENGTH))
         for character in rstring:
-            self.assertTrue(character in charscope, msg="`rchar {}` ⊢ {} ∉ CHARSCOPE[]".format(' '.join(args), character)),
+            self.assertTrue(character in charscope,
+                            msg="`rchar {}` ⊢ {} ∉ CHARSCOPE[]".format(' '.join(args), character)),
 
 
 if __name__ == '__main__':
