@@ -214,7 +214,8 @@ def parse_args(*args, **kwargs):
     strchoice_group.add_argument("-C", "--ctrl33", action='store_true',
                                  help="A pseudo-random string generated from the 33 ASCII control characters.")
     strchoice_group.add_argument("-P", "--print95", action='store_true',
-                                 help="A pseudo-random string generated from the 95 standard ASCII characters.")
+                                 help="A pseudo-random string generated from the 95 standard ASCII characters "
+                                      "(default=True).")
     strchoice_group.add_argument("-E", "--extprint223", action='store_true',
                                  help="A pseudo-random string generated from the 223 standard+extended ASCII "
                                       "characters.")
@@ -274,7 +275,7 @@ def main(params):
         print(generate_string_from_charscope(params.length, params.charscope))
 
     else:  # Print
-        logging.debug("No options selected. Defaulting to generate from Printable95.")
+        logging.debug("No options selected. Defaulting to --print95.")
         print(generate_print95(params.length))
 
     return 0
