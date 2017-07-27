@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.4
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # -----------------------------------------------------------------------------
 #   rchar.py
@@ -50,7 +50,6 @@ __all__ = ['__version__', 'parse_args', 'main', 'generate_ctrl33', 'generate_pri
 
 def generate_ctrl33(length):
     """Generate a pseudo-random string from the 33 ASCII control characters.
-
     :param length: The quantity of characters to generate in string.
     :return: The generated string of ASCII control characters
     :rtype: str
@@ -61,7 +60,6 @@ def generate_ctrl33(length):
 
 def generate_print95(length):
     """Generate a pseudo-random string from the standard printable 95 ASCII characters.
-
     :param length: The quantity of characters to generate in string.
     :return: The generated string of printable ASCII characters.
     :rtype: str
@@ -72,7 +70,6 @@ def generate_print95(length):
 
 def generate_extprint223(length):
     """Generate a pseudo-random string from the standard+extended printable 223 ASCII characters.
-
     :param length: The quantity of characters to generate in string.
     :return: The generated string from the extended set of printable ASCII characters.
     :rtype: str
@@ -83,7 +80,6 @@ def generate_extprint223(length):
 
 def generate_full256(length):
     """Generate a pseudo-random string from all 256 ASCII characters.
-
     :param length: The quantity of characters to generate in string.
     :return: The generated string from all 256 ASCII characters.
     :rtype: str
@@ -94,7 +90,6 @@ def generate_full256(length):
 
 def generate_string_from_charscope(length, charscope):
     """Generate a pseudo-random string from a provided scope of characters.
-
     :param length: The quantity of characters to generate in string.
     :param charscope: The scope of characters from which to select.
     :return: The generated string from a select set of characters.
@@ -108,7 +103,6 @@ def generate_string_from_charscope(length, charscope):
 
 def generate_string_from_range(length, lobound, hibound):
     """Generate a pseudo-random string from a range of ASCII characters.
-
     :param length: The quantity of characters to generate in string.
     :param lobound: The low-range boundary of characters to select.
     :param hibound: The high-range boundary of characters to select.
@@ -123,7 +117,6 @@ def generate_string_from_range(length, lobound, hibound):
 
 def __generate_string(length, _randchar_func, opts):
     """Generate a pseudo-random string from a provided random-character function.
-
     :param length: The quantity of characters to generate in string.
     :param _randchar_func: The function that generates a random character.
     :param opts: The required option list to pass into _randchar_func .
@@ -144,7 +137,6 @@ def __generate_string(length, _randchar_func, opts):
 
 def __generate_character_in_charscope(charscope):
     """Generate a pseudo-random character from a provided scope of characters.
-
     :param charscope: The scope of characters from which to select.
     :return: A randomly selected character from the charascope.
     :rtype: str
@@ -155,7 +147,6 @@ def __generate_character_in_charscope(charscope):
 def __range2charscope(lobound, hibound):
     """Convert an (int, int) range representing ASCII characters into a string
     containing that full scope of characters.
-
     :param lobound: The low-range boundary of characters to select.
     :param hibound: The high-range boundary of characters to select.
     :return: A set of characters corresponding to a range of indicies within the ASCII table.
@@ -170,7 +161,6 @@ def __range2charscope(lobound, hibound):
 
 def __unit_test():
     """Perform a unit test on this program.
-
     :return rc: The return code that is a sum of errors experienced in unit test.
     :rtype: int
     """
@@ -184,7 +174,6 @@ def __unit_test():
 
 def __unit_breakdown(length, _func_str):
     """Breakdown the output of a generated string function.
-
     :param length: The quantity of characters to generate in string.
     :param _func_str: The function to generate a particular random string.
     :return: The return code that is a sum of errors experienced in unit test breakdown.
@@ -211,7 +200,6 @@ def __unit_breakdown(length, _func_str):
 
 def parse_args(*args, **kwargs):
     """Parse the arguments received from STDIN.
-
     :return: The parameters parsed from the input arguments.
     :rtype: Namespace
     """
@@ -232,8 +220,7 @@ def parse_args(*args, **kwargs):
                                       "characters.")
     strchoice_group.add_argument("-A", "--full256", action='store_true',
                                  help="A pseudo-random string generated from all 256 ASCII characters.")
-    strchoice_group.add_argument("--unittest", action='store_true',
-                                 help="Execute unit test and program exit rc=errors.")
+    strchoice_group.add_argument("--unittest", action='store_true', help=argparse.SUPPRESS)
     parser.add_argument("-v", "--verbose", action="count", default=0,
                         help="Display rchar.py debug output during runtime.")
     parser.add_argument("--version", action='version', version='rchar.py %s' % __version__)
