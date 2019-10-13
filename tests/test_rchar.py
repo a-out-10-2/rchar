@@ -22,6 +22,7 @@
 # -----------------------------------------------------------------------------
 from io import StringIO
 from contextlib import redirect_stdout
+from timeit import timeit
 import unittest
 
 from rchar import main, parse_args
@@ -114,6 +115,21 @@ class BasicCharacterVerification(unittest.TestCase):
         for character in rstring:
             self.assertTrue(character in charscope,
                             msg="`rchar {}` ⊢ {} ∉ CHARSCOPE[]".format(' '.join(args), character)),
+
+
+class GenerationPerformance(unittest.TestCase):
+
+    @staticmethod
+    def test_generation_performance():
+        """
+        Measure the time to generate random strings.
+        """
+        max_power = 26
+        print("\n#CHR:\tTIME")
+        for i in range(0, max_power):
+            print("{}:\t".format(2 ** i), end="")
+            args = ['--full256', str(2 ** i)]
+            print("{} sec".format(timeit(lambda: rchar_output_string(args), number=1)))
 
 
 if __name__ == '__main__':
