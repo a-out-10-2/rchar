@@ -18,15 +18,7 @@ Project Parameters
 How To Run Or Call rchar
 ------------------------
 
-To run from the command line, run randascii with help option to see proper syntax.
+To run from the command line, run rchar with help option to see proper syntax.
 
 Syntax (in-path)
     rchar --help
-
-Fool-proof syntax
-    env python ./rchar --help
-
-To call method from Python, import the module.
-    import rchar
-
-View program source or use Python tab completion to view accessible methods.
